@@ -3,7 +3,9 @@
 #include "../tools/check_cuda.h"
 #include "../include/config.h"
 
-__global__ void reduce_step(
+#define REDUCE_KERNEL interleaved_addressing_1_step
+
+__global__ void interleaved_addressing_1_step(
     const int* __restrict__ input,
     int* __restrict__ output,
     int N
@@ -28,3 +30,5 @@ __global__ void reduce_step(
 
     if(tid == 0) output[bid] = shared[0];
 }
+
+#include "reduce_launcher.h"

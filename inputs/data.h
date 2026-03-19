@@ -7,9 +7,9 @@ void initialize_host_data(std::vector<int>& h_input, int N);
 
 void initialize_host_reference_data(std::vector<int>& h_input, std::vector<int>& h_output, int N);
 
-void allocate_and_copy_to_device(const std::vector<int>& h_input, int*& d_input, int*& d_output, int N);
+void allocate_and_copy_to_device(const std::vector<int>& h_input, int*& d_input, int*& d_output, int*& d_buf, int N);
 
-void cleanup_device_data(int* d_input, int* d_output);
+void cleanup_device_data(int* d_input, int* d_output, int* d_buf);
 
 bool save_inputs(const std::vector<int>& h_input, const char* filename, int N);
 

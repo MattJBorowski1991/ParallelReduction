@@ -3,13 +3,15 @@
 #include "../tools/check_cuda.h"
 #include "../include/config.h"
 #include "../inputs/data.h"
-#include "../kernels/reduce_launcher.h"
 #include <vector>
 #include <stdio.h>
 #include <string>
 #include <cstring>
 #include <cstdlib>
 #include <sys/stat.h>
+
+// Forward declaration of the kernel-specific solve function
+extern "C" void solve(const int* input, int* output, int N, int* buf);
 
 // helper to construct cache filename
 std::string get_cache_filename(int N){
@@ -35,8 +37,8 @@ bool ensure_cache_dir(){
 
 int main(int argc, char** argv){
     std::string kernel = "interleaved_addressing_1";
-    int warmups = 2;
-    int runs = 3;
+    int warmups = 3;
+    int runs = 15;
     
     //argument parsing loop
     for(int i = 1; i < argc; ++i){
@@ -73,10 +75,7 @@ int main(int argc, char** argv){
 
 
     std::printf("Allocating and copying data to device... \n");
-    allocate_and_copy_to_device(h_input, d_input, d_output, N);
-    
-    //allocate workspace buffer for reduction (not profiled)
-    CHECK_CUDA(cudaMalloc(&d_buf, N * sizeof(int)));
+    allocate_and_copy_to_device(h_input, d_input, d_output, d_buf, N);
 
     std::printf("Running correctness check... \n");
     solve(d_input, d_output, N, d_buf);
@@ -85,7 +84,7 @@ int main(int argc, char** argv){
 
     if(!verify_results(h_output, ref_output, N)){
         std::fprintf(stderr, "Correctness check FAILED.\n");
-        cleanup_device_data(d_input, d_output);
+        cleanup_device_data(d_input, d_output, d_buf);
         return 1;
     }
     std::printf("Correctness check PASSED.\n");
@@ -110,8 +109,7 @@ int main(int argc, char** argv){
 
     CHECK_CUDA(cudaMemcpy(h_output.data(), d_output, sizeof(int), cudaMemcpyDeviceToHost));
 
-    CHECK_CUDA(cudaFree(d_buf));
-    cleanup_device_data(d_input, d_output);
+    cleanup_device_data(d_input, d_output, d_buf);
 
     std::printf("Profiling complete.\n");
     return 0;

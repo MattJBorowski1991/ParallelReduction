@@ -16,21 +16,25 @@ void initialize_host_reference_data(std::vector<int>& h_input, std::vector<int>&
 }
 
 
-void allocate_and_copy_to_device(const std::vector<int>& h_input, int*& d_input, int*& d_output, int N){
+void allocate_and_copy_to_device(const std::vector<int>& h_input, int*& d_input, int*& d_output, int*& d_buf, int N){
     d_input = nullptr;
     d_output = nullptr;
+    d_buf = nullptr;
 
     size_t input_bytes = static_cast<size_t>(N) * sizeof(int);
     size_t output_bytes = sizeof(int);
+    size_t buf_bytes = static_cast<size_t>(N) * sizeof(int);
     CHECK_CUDA(cudaMalloc((void**)&d_input, input_bytes));
     CHECK_CUDA(cudaMalloc((void**)&d_output, output_bytes));
+    CHECK_CUDA(cudaMalloc((void**)&d_buf, buf_bytes));
     CHECK_CUDA(cudaMemcpy(d_input, h_input.data(), input_bytes, cudaMemcpyHostToDevice));
     CHECK_CUDA(cudaMemset(d_output, 0, output_bytes));
 }
 
-void cleanup_device_data(int* d_input, int* d_output){
+void cleanup_device_data(int* d_input, int* d_output, int* d_buf){
     if(d_input) CHECK_CUDA(cudaFree(d_input));
     if(d_output) CHECK_CUDA(cudaFree(d_output));
+    if(d_buf) CHECK_CUDA(cudaFree(d_buf));
 }
 
 bool save_inputs(const std::vector<int>&h_input, const char* filename, int N){

@@ -30,7 +30,6 @@ BASE_SRCS = $(DRIVERS_DIR)/main.cu \
 			$(INPUTS_DIR)/data.cu
 
 KERNEL_SRCS = $(KERNELS_DIR)/$(KERNEL).cu \
-			$(KERNELS_DIR)/reduce_launcher.cu
 
 SRCS = $(BASE_SRCS) $(KERNEL_SRCS)
 
