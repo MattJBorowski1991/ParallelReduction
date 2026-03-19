@@ -3,6 +3,7 @@
 #include "../tools/check_cuda.h"
 #include "../include/config.h"
 #include "../inputs/data.h"
+#include "../kernels/reduce_launcher.h"
 #include <vector>
 #include <stdio.h>
 #include <string>
@@ -13,7 +14,7 @@
 // helper to construct cache filename
 std::string get_cache_filename(int N){
     char buffer[256];
-    snprintf(buffer, sizeof(buffer), ".cache/ref_N%d_d%d.bin", N);
+    snprintf(buffer, sizeof(buffer), ".cache/ref_N%d.bin", N);
     return std::string(buffer);
 }
 
@@ -31,9 +32,6 @@ bool ensure_cache_dir(){
 #endif
 }
 
-
-//forward declaration of kernel launcher (defined in each .cu file with kernels)
-extern "C" void solve(const int *input, int *output, int N);
 
 int main(int argc, char** argv){
     std::string kernel = "interleaved_addressing_1";
@@ -57,7 +55,7 @@ int main(int argc, char** argv){
     std::vector<int> h_output(1);
 
     //device pointers
-    int *d_input = nullptr, *d_output = nullptr;
+    int *d_input = nullptr, *d_output = nullptr, *d_buf = nullptr;
     
 
 
@@ -76,9 +74,12 @@ int main(int argc, char** argv){
 
     std::printf("Allocating and copying data to device... \n");
     allocate_and_copy_to_device(h_input, d_input, d_output, N);
+    
+    //allocate workspace buffer for reduction (not profiled)
+    CHECK_CUDA(cudaMalloc(&d_buf, N * sizeof(int)));
 
     std::printf("Running correctness check... \n");
-    solve(d_input, d_output, N);
+    solve(d_input, d_output, N, d_buf);
     CHECK_CUDA(cudaDeviceSynchronize());
     CHECK_CUDA(cudaMemcpy(h_output.data(), d_output, sizeof(int), cudaMemcpyDeviceToHost));
 
@@ -89,20 +90,18 @@ int main(int argc, char** argv){
     }
     std::printf("Correctness check PASSED.\n");
 
-    //keep device memory for profiling
-
-    CHECK_CUDA(cudaProfilerStart());
-
     std::printf("Running %d warmup runs...\n", warmups);
     for(int i = 0; i < warmups; ++i){
-        solve(d_input, d_output, N);
+        solve(d_input, d_output, N, d_buf);
         CHECK_CUDA(cudaGetLastError());
         CHECK_CUDA(cudaDeviceSynchronize());
     }
 
+    CHECK_CUDA(cudaProfilerStart());
+
     std::printf("Running %d profiling runs...\n", runs);
     for(int i = 0; i < runs; ++i){
-        solve(d_input, d_output, N);
+        solve(d_input, d_output, N, d_buf);
         CHECK_CUDA(cudaGetLastError());
         CHECK_CUDA(cudaDeviceSynchronize());
     }
@@ -111,6 +110,7 @@ int main(int argc, char** argv){
 
     CHECK_CUDA(cudaMemcpy(h_output.data(), d_output, sizeof(int), cudaMemcpyDeviceToHost));
 
+    CHECK_CUDA(cudaFree(d_buf));
     cleanup_device_data(d_input, d_output);
 
     std::printf("Profiling complete.\n");

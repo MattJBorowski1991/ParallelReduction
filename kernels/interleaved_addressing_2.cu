@@ -22,7 +22,8 @@ __global__ void reduce_step(
     __syncthreads();
 
     for(int s = 1; s < THREADS; s <<= 1){
-        if(tid % (2*s) == 0) shared[tid] += shared[tid + s];
+        int idx = 2 * s * tid;
+        if(idx < THREADS) shared[idx] += shared[idx + s];
         __syncthreads();
     }
 

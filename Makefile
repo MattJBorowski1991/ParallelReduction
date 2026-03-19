@@ -1,5 +1,7 @@
 NVCC = nvcc
 
+.DEFAULT_GOAL := all
+
 NVCC_FLAGS = -O3 -lineinfo -Xcompiler -Wall
 
 MAXRREGCOUNT ?=
@@ -9,7 +11,7 @@ else
 	NVCC_REGCOUNT = -maxrregcount=$(MAXRREGCOUNT)
 endif
 
-NVCC_ARCH ?= 79
+NVCC_ARCH ?= 75
 
 NVCC_GENCODE = 	-gencode arch=compute_$(NVCC_ARCH),code=sm_$(NVCC_ARCH) \
 				-gencode arch=compute_$(NVCC_ARCH),code=compute_$(NVCC_ARCH)
@@ -22,20 +24,17 @@ INPUTS_DIR = inputs
 TOOLS_DIR = tools
 BIN_DIR = bin
 
-ifndef KERNEL
-$(error KERNEL variable not set. Usage: make KERNEL=kernel_name)
-endif
-
 TARGET = $(BIN_DIR)/profile_$(KERNEL)
 
 BASE_SRCS = $(DRIVERS_DIR)/main.cu \
 			$(INPUTS_DIR)/data.cu
 
-KERNEL_SRCS = $(KERNELS_DIR)/$(KERNEL).cu
+KERNEL_SRCS = $(KERNELS_DIR)/$(KERNEL).cu \
+			$(KERNELS_DIR)/reduce_launcher.cu
 
 SRCS = $(BASE_SRCS) $(KERNEL_SRCS)
 
-.PHONY: all clean help
+.PHONY: all clean help check_kernel
 
 help:
 	@echo "Usage: make KERNEL=<kernel_name> [NVCC_ARCH=<arch>] [MAXRREGCOUNT=<count>]"
@@ -45,8 +44,13 @@ help:
 	@echo "  make KERNEL=interleaved_addressing_1 NVCC_ARCH=80"
 	@echo "  make clean && make KERNEL=interleaved_addressing_1"
 
-all: $(TARGET)
+all: check_kernel $(TARGET)
 	@echo "Build: $(TARGET) (kernel=$(KERNEL), arch=sm_$(NVCC_ARCH))"
+
+check_kernel:
+ifndef KERNEL
+	$(error KERNEL variable not set. Usage: make KERNEL=kernel_name)
+endif
 
 $(TARGET): $(SRCS)
 	@mkdir -p $(BIN_DIR)
