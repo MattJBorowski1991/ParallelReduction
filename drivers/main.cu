@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 
 // Define the runtime-configurable THREADS variable
-int THREADS = 512;
+int THREADS = 256;
 
 // Forward declaration of the kernel-specific solve function
 extern "C" void solve(const int* input, int* output, int N, int* buf);
@@ -67,14 +67,9 @@ int main(int argc, char** argv){
 
     std::vector<int> ref_output(1);
 
-    //try to load cache reference, compute if not found
+    // Initialize host data (handles input caching internally)
     ensure_cache_dir();
-    std::string ref_cache_file = get_cache_filename(N);
-    if(!load_reference(h_input, ref_output, ref_cache_file.c_str(), N)){
-        std::printf("Computing CPU reference ...\n");
-        initialize_host_reference_data(h_input, ref_output, N);
-        save_reference(h_input, ref_output, ref_cache_file.c_str(), N);
-    }
+    initialize_host_reference_data(h_input, ref_output, N);
 
 
     std::printf("Allocating and copying data to device... \n");

@@ -66,15 +66,17 @@ all_kernels: $(ALL_TARGETS)
 	@echo "Built all kernels: $(ALL_KERNELS)"
 
 profile: all_kernels
+	@mkdir -p prof/txt
 	@for k in $(ALL_KERNELS); do \
 		echo "Profiling $$k ..."; \
-		$(BIN_DIR)/profile_$$k --warmups=$(PROFILE_WARMUPS) --runs=$(PROFILE_RUNS) 2>&1 | tee $$k.txt; \
+		$(BIN_DIR)/profile_$$k --warmups=$(PROFILE_WARMUPS) --runs=$(PROFILE_RUNS) 2>&1 | tee prof/txt/$$k.txt; \
 	done
 
 profile_ncu: all_kernels
+	@mkdir -p prof/txt
 	@for k in $(ALL_KERNELS); do \
 		echo "Profiling $$k with NCU ..."; \
-		$(NCU) --set $(NCU_SET) $(NCU_FLAGS) $(BIN_DIR)/profile_$$k --warmups=$(PROFILE_WARMUPS) --runs=$(PROFILE_RUNS) 2>&1 | tee $$k_ncu.txt; \
+		$(NCU) --set $(NCU_SET) $(NCU_FLAGS) $(BIN_DIR)/profile_$$k --warmups=$(PROFILE_WARMUPS) --runs=$(PROFILE_RUNS) 2>&1 | tee prof/txt/$$k_ncu.txt; \
 	done
 
 $(BIN_DIR)/profile_%: $(BASE_SRCS) $(KERNELS_DIR)/%.cu

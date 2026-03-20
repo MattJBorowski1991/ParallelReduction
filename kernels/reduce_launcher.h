@@ -6,6 +6,11 @@
 
 // Each kernel file must #define REDUCE_KERNEL before including this
 // e.g. #define REDUCE_KERNEL interleaved_addressing_1_step
+// Optional: #define BLOCKS_DIVISOR N (for multi-elem kernels, set to elemsPerThread)
+
+#ifndef BLOCKS_DIVISOR
+#define BLOCKS_DIVISOR 1
+#endif
 
 #ifndef REDUCE_LAUNCH
 #define REDUCE_LAUNCH(input, output, n, blocks, threads) \
@@ -27,7 +32,7 @@ extern "C" void solve(
 
     int* src = buf;
     int* dst = output;
-    int blocks = (N + THREADS - 1) / THREADS;  // Compute blocks at runtime
+    int blocks = (N + BLOCKS_DIVISOR * THREADS - 1) / (BLOCKS_DIVISOR * THREADS);  // Compute blocks at runtime
 
     REDUCE_LAUNCH(input, src, N, blocks, THREADS);
     CHECK_CUDA(cudaGetLastError());
@@ -36,7 +41,7 @@ extern "C" void solve(
     int curr_size = blocks;
 
     while(curr_size > 1){
-        int curr_blocks = (curr_size + THREADS - 1) / THREADS;
+        int curr_blocks = (curr_size + BLOCKS_DIVISOR * THREADS - 1) / (BLOCKS_DIVISOR * THREADS);
         REDUCE_LAUNCH(src, dst, curr_size, curr_blocks, THREADS);
         CHECK_CUDA(cudaGetLastError());
         CHECK_CUDA(cudaDeviceSynchronize());

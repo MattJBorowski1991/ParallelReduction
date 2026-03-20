@@ -1,0 +1,26 @@
+Computing CPU reference ...
+Allocating and copying data to device... 
+Running correctness check... 
+Multi-pass reduction time: 18.111 ms
+Correctness check PASSED.
+Running 3 warmup runs...
+Multi-pass reduction time: 10.743 ms
+Multi-pass reduction time: 10.737 ms
+Multi-pass reduction time: 10.727 ms
+Running 15 profiling runs...
+Multi-pass reduction time: 10.880 ms
+Multi-pass reduction time: 11.100 ms
+Multi-pass reduction time: 11.233 ms
+Multi-pass reduction time: 11.354 ms
+Multi-pass reduction time: 11.327 ms
+Multi-pass reduction time: 11.330 ms
+Multi-pass reduction time: 11.320 ms
+Multi-pass reduction time: 11.331 ms
+Multi-pass reduction time: 11.315 ms
+Multi-pass reduction time: 11.317 ms
+Multi-pass reduction time: 11.322 ms
+Multi-pass reduction time: 11.266 ms
+Multi-pass reduction time: 11.258 ms
+Multi-pass reduction time: 11.264 ms
+Multi-pass reduction time: 11.252 ms
+Profiling complete.

@@ -1,0 +1,25 @@
+Allocating and copying data to device... 
+Running correctness check... 
+Multi-pass reduction time: 1.141 ms
+Correctness check PASSED.
+Running 3 warmup runs...
+Multi-pass reduction time: 1.101 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.098 ms
+Running 15 profiling runs...
+Multi-pass reduction time: 1.098 ms
+Multi-pass reduction time: 1.097 ms
+Multi-pass reduction time: 1.097 ms
+Multi-pass reduction time: 1.098 ms
+Multi-pass reduction time: 1.099 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.098 ms
+Multi-pass reduction time: 1.098 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.106 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.097 ms
+Multi-pass reduction time: 1.096 ms
+Multi-pass reduction time: 1.098 ms
+Profiling complete.

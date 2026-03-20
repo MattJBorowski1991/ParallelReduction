@@ -9,10 +9,39 @@
 
 void initialize_host_reference_data(std::vector<int>& h_input, std::vector<int>& h_output, int N){
     h_input.resize(N);
-    for(int i = 0; i < N; ++i) h_input[i] = 1;
-    
     h_output.resize(1);
-    h_output[0] = N;
+    
+    // Try to load cached input
+    std::string cache_file = ".cache/input_N" + std::to_string(N) + ".bin";
+    std::printf("Attempting to load cached input from %s...\n", cache_file.c_str());
+    
+    if(load_inputs(h_input, cache_file.c_str(), N)){
+        std::printf("✓ Cache loaded successfully!\n");
+        h_output[0] = N;
+        return;
+    }
+    
+    // Generate input of all 1s
+    std::printf("\n✗ Cache not found. Generating input on-host...\n");
+    
+    const int progress_interval = std::max(1, N / 100);  // Update every 1% of progress
+    for(int i = 0; i < N; ++i){
+        h_input[i] = 1;
+        
+        // Simple progress output
+        if((i + 1) % progress_interval == 0){
+            int percent = (((long long)(i + 1) * 100) / N);
+            std::printf("\rGeneration progress: %d%% (%d/%d)", percent, (i + 1), N);
+            std::fflush(stdout);
+        }
+    }
+    std::printf("\n");
+    
+    // Save to cache for next run
+    save_inputs(h_input, cache_file.c_str(), N);
+    std::printf("✓ Input generation complete and cached!\n\n");
+    
+    h_output[0] = N;  // Sum of all 1s is N
 }
 
 
