@@ -4,9 +4,10 @@
 #define CONFIG_H
 
 constexpr int N = 16777216;
-constexpr int THREADS = 512;
-constexpr int BLOCKS = (N + THREADS - 1) / THREADS;
+extern int THREADS;  // Runtime configurable, defined in main.cu
+constexpr int MAX_THREADS = 1024;  // Compile-time max for dynamic shared memory
 
-constexpr int elemsPerThread = 16;
+// Note: BLOCKS computed at runtime in solve()
+constexpr int elemsPerThread = 8;
 
 #endif // CONFIG_H

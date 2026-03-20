@@ -7,6 +7,11 @@
 // Each kernel file must #define REDUCE_KERNEL before including this
 // e.g. #define REDUCE_KERNEL interleaved_addressing_1_step
 
+#ifndef REDUCE_LAUNCH
+#define REDUCE_LAUNCH(input, output, n, blocks, threads) \
+    REDUCE_KERNEL<<<(blocks), (threads), (threads) * sizeof(int)>>>(input, output, n)
+#endif
+
 
 extern "C" void solve(
     const int* input,
@@ -14,28 +19,36 @@ extern "C" void solve(
     int N,
     int* buf
 ){
-    int* src = buf;
-    int* dst = output;
-
-    REDUCE_KERNEL<<<BLOCKS, THREADS>>>(input, src, N);
-    CHECK_CUDA(cudaGetLastError());
-    CHECK_CUDA(cudaDeviceSynchronize());
-    
-    int curr_size = BLOCKS;
-
     cudaEvent_t start, stop;
     CHECK_CUDA(cudaEventCreate(&start));
     CHECK_CUDA(cudaEventCreate(&stop));
 
     CHECK_CUDA(cudaEventRecord(start));
+
+    int* src = buf;
+    int* dst = output;
+    int blocks = (N + THREADS - 1) / THREADS;  // Compute blocks at runtime
+
+    REDUCE_LAUNCH(input, src, N, blocks, THREADS);
+    CHECK_CUDA(cudaGetLastError());
+    CHECK_CUDA(cudaDeviceSynchronize());
+    
+    int curr_size = blocks;
+
     while(curr_size > 1){
         int curr_blocks = (curr_size + THREADS - 1) / THREADS;
-        REDUCE_KERNEL<<<curr_blocks, THREADS>>>(src, dst, curr_size);
+        REDUCE_LAUNCH(src, dst, curr_size, curr_blocks, THREADS);
         CHECK_CUDA(cudaGetLastError());
         CHECK_CUDA(cudaDeviceSynchronize());
         int* tmp = dst; dst = src; src = tmp;
         curr_size = curr_blocks;
     }
+
+
+    if(src != output){
+        CHECK_CUDA(cudaMemcpy(output, src, sizeof(int), cudaMemcpyDeviceToDevice));
+    }
+
     CHECK_CUDA(cudaEventRecord(stop));
     CHECK_CUDA(cudaEventSynchronize(stop));
 
@@ -45,8 +58,4 @@ extern "C" void solve(
 
     CHECK_CUDA(cudaEventDestroy(start));
     CHECK_CUDA(cudaEventDestroy(stop));
-
-    if(src != output){
-        CHECK_CUDA(cudaMemcpy(output, src, sizeof(int), cudaMemcpyDeviceToDevice));
-    }
 }

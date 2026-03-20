@@ -1,17 +1,23 @@
 #include <cuda_runtime.h>
+#include "../tools/check_cuda.h"
 #include "../include/config.h"
 
-#define REDUCE_KERNEL sequential_addressing_step
+#define REDUCE_KERNEL atomic_reduction_step
 
-__global__ void sequential_addressing_step(
+__global__ void atomic_reduction_step(
     const int* __restrict__ input,
     int* __restrict__ output,
     int N
 ){
-
     const int tid = threadIdx.x;
     const int bid = blockIdx.x;
     const int gid = bid * blockDim.x + tid;
+
+    __shared__ int temp_output;
+
+    if(tid == 0) temp_output = 0;
+    __syncthreads();
+
     extern __shared__ int s[];
 
     if(gid < N){
@@ -21,12 +27,10 @@ __global__ void sequential_addressing_step(
     }
     __syncthreads();
 
-    for(int off = blockDim.x >> 1; off > 0; off >>= 1){
-        if(tid < off) s[tid] += s[tid + off];
-        __syncthreads();
-    }
+    atomicAdd(&temp_output, s[tid]);
+    __syncthreads();
 
-    if(tid == 0) output[bid] = s[0];
+    if(tid == 0) output[bid] = temp_output;
 }
 
 #include "reduce_launcher.h"

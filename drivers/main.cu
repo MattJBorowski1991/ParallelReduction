@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <sys/stat.h>
 
+// Define the runtime-configurable THREADS variable
+int THREADS = 512;
+
 // Forward declaration of the kernel-specific solve function
 extern "C" void solve(const int* input, int* output, int N, int* buf);
 
@@ -96,9 +99,10 @@ int main(int argc, char** argv){
         CHECK_CUDA(cudaDeviceSynchronize());
     }
 
+    std::printf("Running %d profiling runs...\n", runs);
+
     CHECK_CUDA(cudaProfilerStart());
 
-    std::printf("Running %d profiling runs...\n", runs);
     for(int i = 0; i < runs; ++i){
         solve(d_input, d_output, N, d_buf);
         CHECK_CUDA(cudaGetLastError());

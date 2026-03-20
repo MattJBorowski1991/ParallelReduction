@@ -10,22 +10,22 @@ __global__ void interleaved_addressing_2_step(
     int* __restrict__ output,
     int N
 ){
-    __shared__ int shared[THREADS];
+    extern __shared__ int shared[];
 
     const int tid = threadIdx.x;
     const int bid = blockIdx.x;
-    const int gid = bid * THREADS + tid;
+    const int gid = bid * blockDim.x + tid;
 
-    if(tid < THREADS){
+    if(tid < blockDim.x){
         shared[tid] = input[gid];
     }else{
         shared[tid] = 0;
     }
     __syncthreads();
 
-    for(int s = 1; s < THREADS; s <<= 1){
+    for(int s = 1; s < blockDim.x; s <<= 1){
         int idx = 2 * s * tid;
-        if(idx < THREADS) shared[idx] += shared[idx + s];
+        if(idx < blockDim.x) shared[idx] += shared[idx + s];
         __syncthreads();
     }
 
