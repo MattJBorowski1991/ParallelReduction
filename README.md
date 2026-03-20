@@ -57,6 +57,14 @@ make profile PROFILE_WARMUPS=5 PROFILE_RUNS=20
 - **Profiling:** Runs warmup iterations, then timed profiling iterations
 - **NVIDIA Tools:** Use `ncu` (NVIDIA Compute Profiler) or `nvprof` for detailed metrics
 
+## Profiling Results
+
+### Duration vs Array Size (Log Scale)
+![Duration Plot](prof/profiling_summary.svg)
+
+### % Faster than Slowest Kernel
+![Percent Speedup Plot](prof/profiling_percent_vs_atomic.svg)
+
 ## Profile with NCU
 
 

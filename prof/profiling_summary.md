@@ -1,10 +1,4 @@
-N = 1073741824 = c.a. 1bn
 
-Correctness checks failing for this input by a small margin: 
-
-ia1 & ia2: Mismatch: got 1073999872 expected 1073741824
-
-mept2: Mismatch: got 1073750016 expected 1073741824
 # Profiling Summary
 
 Average execution times (ms) over 15 profiling runs per kernel and array size.
@@ -24,5 +18,19 @@ Average execution times (ms) over 15 profiling runs per kernel and array size.
 | warp_intrinsics_shfl_up_sync | 0.127 | 0.224 | 0.422 | 0.814 | 1.596 | 3.171 | 6.398 | 12.885 | 25.828 |
 | warp_intrinsics_shfl_xor_sync | 0.123 | 0.224 | 0.433 | 0.829 | 1.595 | 3.178 | 6.403 | 12.897 | 25.848 |
 
-```
+## Profiling Graphs
+
+### Duration vs Array Size (Log Scale)
+![Duration Plot](profiling_summary.svg)
+
+### % Faster than Slowest Kernel
+![Percent Speedup Plot](profiling_percent_vs_atomic.svg)
+
+## Notes
+
+1. No global synchronization (other than coop launch) in cuda  - too expensive to build it on hardware with high number of SMs
+2. Coop launch allows only max device block count blocks to be used - i.e. very small number. If your input requires more blocks => serialization
+3. Hence multi pass is used for the reduction kernel
+4. Reductions have very low AI - 1 FLOP per input element => the aim here should be to maximize bandwidth
+5. Possible bottlenecks are instruction overheads - anything that is not L, S or calculation for the final result
 
