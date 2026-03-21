@@ -34,9 +34,9 @@
 | 7 | two_elems_per_thread_grid_strided | Two elements with grid-stride loop |
 | 8 | unroll_last_warp | Unrolled loop with last warp handling |
 | 9 | unroll_fully | Fully unrolled loop optimization |
-| 10 | shfl_down_sync | Shuffle operation - down variant with sync |
-| 11 | shfl_up_sync | Shuffle operation - up variant with sync |
-| 12 | shfl_xor_sync | Shuffle operation - XOR variant with sync |
+| 10 | shfl_down_sync | warp intrinsic |
+| 11 | shfl_up_sync | warp intrinsic |
+| 12 | shfl_xor_sync | warp intrinsic |
 
 ---
 
@@ -55,21 +55,6 @@
 | SM Active Cycles | cycle | 13901237.70 | 15722142.70 | 51908653.67 | 38958718.23 | 30368401.82 | 16981664.98 | 17637795.27 | 26270287.57 | 18930750.20 | 16742064.32 | 16745090.22 | 16743481.05 |
 | Compute (SM) Throughput | % | 67.89 | 76.03 | 58.90 | 60.83 | 78.03 | 77.18 | 71.93 | 90.20 | 55.38 | 55.73 | 55.73 | 55.73 |
 
-### Analysis Comments
-
-
-> **⚙️ OPT** — **Kernels 3, 9, 10, 11, 12** · This workload exhibits low compute throughput and memory bandwidth utilization relative to the peak performance of this device. Achieved compute throughput and/or memory bandwidth below 60.0% of peak typically indicate latency issues. Look at Scheduler Statistics and Warp State Statistics for potential reasons.
-
----
-
-## PM Sampling
-
-| Metric Name | Metric Unit | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Maximum Buffer Size | Mbyte | 7.47 | 7.47 | 14.94 | 14.94 | 14.94 | 7.47 | 7.47 | 7.47 | 7.47 | 7.47 | 7.47 | 7.47 |
-| Maximum Sampling Interval | cycle | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 | 20000 |
-| # Pass Groups |  | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-
 ---
 
 ## Compute Workload Analysis
@@ -84,11 +69,11 @@
 
 ### Metric Definitions
 
-- **Executed Ipc Active** — The number of instructions completed per SM cycle during periods when the SM is actively executing work.
-- **Executed Ipc Elapsed** — The average number of instructions completed per SM cycle over the entire kernel duration.
-- **Issue Slots Busy** — The percentage of available instruction issue slots being utilized by the scheduler to dispatch work to execution pipelines.
-- **Issued Ipc Active** — The number of instructions issued (sent) to execution pipelines per SM cycle during active execution periods.
-- **SM Busy** — The percentage of time the Streaming Multiprocessor is actively executing instructions versus remaining idle.
+- **Executed Ipc Active** — number of executed warp instructions per active cycle (when SM is actively doing work)
+- **Issued Ipc Active** — number of issued warp instructions per active cycle
+- **Executed Ipc Elapsed** — number of executed warp instructions per cycle
+- **Issue Slots Busy** — % of peak instruction issue rate achieved by the scheduler during active cycles.
+- **SM Busy** — % of peak instruction execution rate achieved by the SM's execution units during active cycles.
 
 ### Analysis Comments
 
@@ -107,6 +92,13 @@
 | Mem Busy | % | 36.22 | 41.03 | 25.55 | 48.18 | 43.69 | 43.23 | 40.43 | 46.90 | 30.18 | 30.68 | 30.68 | 30.68 |
 | Mem Pipes Busy | % | 67.89 | 76.03 | 45.65 | 60.83 | 78.03 | 77.18 | 71.93 | 90.20 | 55.38 | 55.73 | 55.73 | 55.73 |
 | Memory Throughput | Gbyte/s | 109.73 | 97.90 | 32.94 | 44.42 | 57.01 | 100.77 | 96.46 | 67.00 | 82.73 | 94.09 | 94.09 | 94.09 |
+
+### Metric Definitions
+
+- **Max Bandwidth** — percentage of peak memory bandwidth being utilized by the kernel.
+- **Mem Busy** — The percentage of time the memory subsystem is actively processing requests.
+- **Mem Pipes Busy** — percentage of cycles the load/store pipelines are waiting for available resources to execute memory instructions.
+- **Memory Throughput** — The actual rate of data movement through memory in gigabytes per second.
 
 ---
 
