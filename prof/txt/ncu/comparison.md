@@ -195,7 +195,7 @@ atomic_global_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1), Context
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
-
+******************************************************************************
 
 
 
@@ -395,6 +395,7 @@ atomic_per_block_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1), Cont
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
+******************************************************************************
 
 
     3. interleaved_addr_divergent_branches
@@ -586,6 +587,8 @@ atomic_per_block_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1), Cont
     Branch Efficiency                   %          100
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
+
+******************************************************************************
 
 
    4. interleaved_addr_bank_conflicts
@@ -791,6 +794,8 @@ interleaved_addressing_2_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 
            (https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#shared-memory-in-matrix-multiplication-c
           -ab) has an example on optimizing shared memory accesses.       
 
+******************************************************************************
+
 
 5. sequential_addressing
 
@@ -975,7 +980,7 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
-
+******************************************************************************
 
     6. two_elems_per_thread
 
@@ -1160,6 +1165,8 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Branch Efficiency                   %          100
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
+
+******************************************************************************
 
 
     7. two_elems_per_thread_grid_strided
@@ -1346,6 +1353,7 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
+******************************************************************************
 
     8. unroll_last_warp
     
@@ -1538,8 +1546,7 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
-
-
+******************************************************************************
 
 
     8. unroll_fully
@@ -1739,8 +1746,9 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
-    10. shfl_down_sync
+******************************************************************************
 
+    10. shfl_down_sync
 
      warp_intrinsics_shfl_down_sync_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 7.5
     Section: GPU Speed Of Light Throughput
@@ -1937,6 +1945,7 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
+******************************************************************************
 
     11. shfl_up_sync
 
@@ -2136,10 +2145,9 @@ sequential_addressing_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1),
     Avg. Divergent Branches      branches            0
     ------------------------- ----------- ------------
 
+******************************************************************************
 
     12. shfl_xor_sync
-
-
 
     warp_intrinsics_shfl_xor_sync_step(const int *, int *, int) (2097152, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 7.5
     Section: GPU Speed Of Light Throughput
