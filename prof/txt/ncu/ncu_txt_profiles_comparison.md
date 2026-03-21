@@ -87,7 +87,6 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | L1/TEX Hit Rate | % | 0.76 | 0.76 | 0.06 | 0.13 | 0.11 | 0.08 | 0.04 | 0.19 | 1.44 | 1.35 | 1.35 | 1.34 |
 | L2 Hit Rate | % | 2.70 | 2.66 | 2.71 | 2.83 | 2.79 | 1.52 | 1.39 | 2.76 | 2.69 | 2.62 | 2.77 | 2.72 |
-| Local Memory Spilling Request Overhead | % | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Max Bandwidth | % | 67.89 | 76.03 | 45.65 | 60.83 | 78.03 | 77.18 | 71.93 | 90.20 | 55.38 | 55.73 | 55.73 | 55.73 |
 | Mem Busy | % | 36.22 | 41.03 | 25.55 | 48.18 | 43.69 | 43.23 | 40.43 | 46.90 | 30.18 | 30.68 | 30.68 | 30.68 |
 | Mem Pipes Busy | % | 67.89 | 76.03 | 45.65 | 60.83 | 78.03 | 77.18 | 71.93 | 90.20 | 55.38 | 55.73 | 55.73 | 55.73 |
@@ -95,10 +94,10 @@
 
 ### Metric Definitions
 
-- **Max Bandwidth** — percentage of peak memory bandwidth being utilized by the kernel.
-- **Mem Busy** — The percentage of time the memory subsystem is actively processing requests.
-- **Mem Pipes Busy** — percentage of cycles the load/store pipelines are waiting for available resources to execute memory instructions.
-- **Memory Throughput** — The actual rate of data movement through memory in gigabytes per second.
+- **Max Bandwidth** — % of peak bandwidth being utilized on the data paths connecting SMs to caches and DRAM
+- **Mem Busy** — % of peak bandwidth being utilized for data transfers within the cache and DRAM 
+- **Mem Pipes Busy** — % of peak memory instruction throughput achievable with ideal load balancing across SMs.
+- **Memory Throughput** — rate of data movement between DRAM and the rest of the GPU
 
 ---
 
@@ -117,7 +116,6 @@
 
 | Metric Name | Metric Unit | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Warp Cycles Per Executed Instruction | cycle | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
 | Warp Cycles Per Issued Instruction | cycle | 23.09 | 24.62 | 12.74 | 22.94 | 20.83 | 21.19 | 14.28 | 22.80 | 23.14 | 21.16 | 21.16 | 21.16 |
 
 ---

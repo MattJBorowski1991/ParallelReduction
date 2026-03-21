@@ -26,6 +26,28 @@ Average execution times (ms) over 15 profiling runs per kernel and array size.
 ### % Faster than Slowest Kernel
 ![Percent Speedup Plot](profiling_percent_vs_atomic.svg)
 
+---
+
+## NCU Analysis Charts (N = 1,073,741,824)
+
+### GPU Speed Of Light Throughput
+![GPU Speed Of Light](graphs/ncu_throughput_analysis.png)
+
+### Memory Workload
+![Memory Workload Analysis](graphs/ncu_memory_workload_analysis.png)
+
+### Memory Throughput (Gbyte/s)
+![Memory Throughput](graphs/ncu_mem_throughput_gbytes.png)
+
+### Scheduler Statistics
+![Scheduler Statistics](graphs/ncu_scheduler_analysis.png)
+
+### Instruction Statistics
+![Instruction Statistics](graphs/ncu_instruction_statistics.png)
+
+### Source Counters
+![Source Counters](graphs/ncu_source_counters.png)
+
 ## Notes
 
 1. No global synchronization (other than coop launch) in cuda  - too expensive to build it on hardware with high number of SMs
