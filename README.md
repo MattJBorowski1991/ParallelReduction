@@ -137,9 +137,23 @@ python -c "import torch; print(torch.version.cuda)"
 
 If they differ, install a matching PyTorch wheel or CUDA toolkit before proceeding.
 
+### Installation for External Projects
+
+To use this extension in another repository:
+
+```bash
+pip install git+https://github.com/MattJBorowski1991/ParallelReduction.git
+```
+
+Then in your code:
+```python
+import parallel_reduction_ext as ext
+result = ext.launch_atomic_global(cuda_tensor)
+```
+
 ### Build and Test
 
-From the repository root:
+From the repository root (for local development):
 
 ```bash
 # Clean previous build artifacts
