@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-setup.py
-extensions/torch/torch_ext.cu
-parallel_reduction_ext.egg-info/PKG-INFO
-parallel_reduction_ext.egg-info/SOURCES.txt
-parallel_reduction_ext.egg-info/dependency_links.txt
-parallel_reduction_ext.egg-info/top_level.txt

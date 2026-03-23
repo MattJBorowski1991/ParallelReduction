@@ -1,11 +1,12 @@
 # CUDA Parallel Reduction Benchmark
 
-A CUDA implementation of 12 parallel reduction kernels with Nsight Compute profiling analysis. The profiling comparison amongs all kernels is below, while the detailed Nsight Compute comparison between the best performing kernel ([atomic_global](kernels/atomic_global.cu)) vs the worst performing kernel [interleaved_addr_divergent_branch.cu](kernels/interleaved_addr_divergent_branch.cu) is in [profiling_best_vs_worst.md](profiling_best_vs_worst.md).
+A CUDA implementation of 12 parallel reduction kernels with comprehensive Nsight Compute profiling analysis.
+
+For a detailed comparison between the best performing kernel ([atomic_global](kernels/atomic_global.cu)) and the worst performing kernel ([interleaved_addr_divergent_branch](kernels/interleaved_addr_divergent_branch.cu)), see [profiling_best_vs_worst.md](profiling_best_vs_worst.md).
 
 ## Profiling Results
 
-Average execution times (ms) over 15 profiling runs per kernel and array size varies in the columns from `N=4M` to `N=1073M`. 
-Measured with cudaEventRecord.
+Average execution times (ms) over 15 profiling runs per kernel and array size (N = 4M to 1073M). Measured with `cudaEventRecord`.
 
 | ID | Kernel | 4M | 8M | 16M | 33M | 67M | 134M | 268M | 536M | 1073M |
 |:--:|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|-----|
@@ -123,21 +124,26 @@ Profile with PTX and SASS embedded:
 ncu --import-source yes --set full --export prof/ncu/interleaved_addr_divergent_branch.ncu-rep ./bin/profile_interleaved_addr_divergent_branch --kernel=interleaved_addr_divergent_branch --warmup=5 --runs=10
 ```
 
-## PyTorch extension
+## PyTorch Extension
 
 A PyTorch C++/CUDA extension is provided under `extensions/torch`. It builds and installs a module named `parallel_reduction_ext` which exposes `launch_atomic_global(input)` — a launcher that runs `kernels/atomic_global.cu` and returns per-block sums.
 
 ### Prerequisites
 
-**Important:** The system CUDA toolkit (`nvcc --version`) must match the CUDA version PyTorch was built with (`python -c "import torch; print(torch.version.cuda)"`). If they differ, install a matching PyTorch wheel or CUDA toolkit before proceeding.
+**Important:** The system CUDA toolkit (`nvcc --version`) must match the CUDA version PyTorch was built with. Check with:
+```bash
+python -c "import torch; print(torch.version.cuda)"
+```
 
-### Build and test
+If they differ, install a matching PyTorch wheel or CUDA toolkit before proceeding.
+
+### Build and Test
 
 From the repository root:
 
 ```bash
 # Clean previous build artifacts
-rm -rf build/ dist/ *.egg-info
+rm -rf build/ dist/ *.egg-info/
 
 # Build and install in editable mode
 python -m pip install -e .
@@ -145,11 +151,17 @@ python -m pip install -e .
 # Set Torch native library path (required once per shell session)
 export LD_LIBRARY_PATH="$(python -c 'import torch,os; print(os.path.join(os.path.dirname(torch.__file__),"lib"))'):$LD_LIBRARY_PATH"
 
-# Run the test (requires PYTHONPATH to import local extensions package)
+# Run the test
 PYTHONPATH=. python extensions/torch/test_ext.py
 
-# Or test the installed module directly (no PYTHONPATH needed)
+# Or test the installed module directly
 python -c "import parallel_reduction_ext as ext; import torch; x=torch.arange(1024,dtype=torch.int32,device='cuda'); print('output[:8]:', ext.launch_atomic_global(x)[:8])"
+```
+
+### Notes
+
+- Thread block size (`THREADS`) is currently hardcoded to 256 in `extensions/torch/torch_ext.cu`.
+- The kernel uses shared memory dynamically sized to `THREADS * sizeof(int)`.
 
 
 ## Directory Structure
@@ -158,12 +170,16 @@ python -c "import parallel_reduction_ext as ext; import torch; x=torch.arange(10
 .
 ├── bin/                      # Compiled executables
 ├── drivers/                  # Main driver (main.cu)
+├── extensions/               # PyTorch extension bindings
 ├── kernels/                  # Kernel implementations (*.cu)
 ├── inputs/                   # Data generation and I/O (data.cu, data.h)
 ├── include/                  # Configuration (config.h)
 ├── prof/                     # Profiling results and analysis
 ├── tools/                    # Utilities (check_cuda.h)
 ├── .cache/                   # Reference output cache
+├── .gitignore                # Git ignore rules
 ├── Makefile                  # Build configuration
+├── setup.py                  # PyTorch extension setup
+├── pyproject.toml            # Build system config
 └── README.md                 # This file
 ```
