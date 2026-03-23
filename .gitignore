@@ -1,0 +1,13 @@
+# Build and temporary files
+*.o
+*.so
+*.exe
+
+# Python cache
+__pycache__/
+
+# Profiling outputs
+prof/ncu/
+
+# Images and generated graphs (optional)
+# prof/images/
