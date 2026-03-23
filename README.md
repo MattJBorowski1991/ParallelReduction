@@ -4,7 +4,8 @@ A CUDA implementation of 12 parallel reduction kernels with Nsight Compute profi
 
 ## Profiling Results
 
-Average execution times (ms) over 15 profiling runs per kernel and array size varies in the columns from N=4M to N=1073M. Measured with cudaEventRecord.
+Average execution times (ms) over 15 profiling runs per kernel and array size varies in the columns from `N=4M` to `N=1073M`. 
+Measured with cudaEventRecord.
 
 | ID | Kernel | 4M | 8M | 16M | 33M | 67M | 134M | 268M | 536M | 1073M |
 |:--:|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|-----|
@@ -21,9 +22,9 @@ Average execution times (ms) over 15 profiling runs per kernel and array size va
 | 11 | [warp_intrinsics_shfl_up_sync](kernels/warp_intrinsics_shfl_up_sync.cu) | 0.127 | 0.224 | 0.422 | 0.814 | 1.596 | 3.171 | 6.398 | 12.885 | 25.828 |
 | 12 | [warp_intrinsics_shfl_xor_sync](kernels/warp_intrinsics_shfl_xor_sync.cu) | 0.123 | 0.224 | 0.433 | 0.829 | 1.595 | 3.178 | 6.403 | 12.897 | 25.848 |
 
-![Duration Plot](prof/profiling_summary.svg)
+![Duration Plot](prof/images/profiling_summary.svg)
 
-![Percent Speedup Plot](prof/profiling_percent_vs_atomic.svg)
+![Percent Speedup Plot](prof/images/profiling_percent_vs_atomic.svg)
 
 **Observations:**
 - Performance advantage of faster kernels over the slowest grows with input size, though the gap plateaus beyond ~134M elements.
