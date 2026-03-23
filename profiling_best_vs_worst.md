@@ -2,8 +2,6 @@
 
 **Kernels profiled:** [interleaved_addr_divergent_branch.cu](kernels/interleaved_addr_divergent_branch.cu) (base, inferior kernel) and [atomic_global.cu](kernels/atomic_global.cu) (superior kernel).
 
-## Goal
-
 ## Kernel Details
 
 We profile the best vs the worst performing kernel from our collection in `kernels`.
@@ -13,7 +11,7 @@ The name `atomic_global.cu` can be slightly misleading: this kernel still uses S
 
 ### Result
 
-`3.7x` speedup for an input of `N=1,070M` — down from `89 ms` to `24 ms`.
+`3.7x` speedup for an input of `N=1,070 M` — down from `89 ms` to `24 ms`.
 
 ## Profiling results
 
@@ -98,14 +96,3 @@ As expected, the `atomicAdd` line is responsible for the largest share of stalls
 ![Source Code PTX](prof/images/parallel_source_code_ptx.jpg)
 
 ![Source Code SASS](prof/images/parallel_source_code_sass.jpg)
-
-## Additional Visuals
-
-
-
-
-## Notes
-
-## Next Steps
-
-
